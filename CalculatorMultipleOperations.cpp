@@ -70,7 +70,7 @@ int main() {
         return 1;
     }
 
-    // Sprawdzanie kolejności działań: '*','/' najpierw, '+' i '-' później
+    // Queue
     for (char precedence : {'*', '/', '+', '-'}) {
         for (size_t i = 0; i < operations.size(); ++i) {
             if (operations[i] == precedence) {
