@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -46,20 +48,42 @@ float calculate(float x, float y, char op) {
 }
 
 int main() {
-    float num1, num2;
-    char operation;
+    string input;
+    cout << "Enter operations (+,-,*,/) separated by spaces: ";
+    getline(cin, input);
 
-    cout << "Enter operation(+,-,*,/): ";
-    cin >> num1 >> operation >> num2;
+    istringstream iss(input);
+    vector<float> numbers;
+    vector<char> operations;
 
-    if (cin && (operation == '+' || operation == '-' || operation == '*' || operation == '/')) {
-        float result = calculate(num1, num2, operation);
-
-        cout << "Result: " << result << "\n";
+    float num;
+    char op;
+    while (iss >> num >> op) {
+        numbers.push_back(num);
+        operations.push_back(op);
     }
-    else {
+    // Push the last number into the numbers vector
+    numbers.push_back(num);
+
+    if (numbers.size() != operations.size() + 1) {
         cout << "Invalid input!" << endl;
+        return 1;
     }
+
+    // Sprawdzanie kolejności działań: '*','/' najpierw, '+' i '-' później
+    for (char precedence : {'*', '/', '+', '-'}) {
+        for (size_t i = 0; i < operations.size(); ++i) {
+            if (operations[i] == precedence) {
+                float result = calculate(numbers[i], numbers[i + 1], operations[i]);
+                numbers[i] = result;
+                numbers.erase(numbers.begin() + i + 1);
+                operations.erase(operations.begin() + i);
+                --i; // Adjust index after erasing
+            }
+        }
+    }
+
+    cout << "Result: " << numbers[0] << "\n";
 
     return 0;
 }
